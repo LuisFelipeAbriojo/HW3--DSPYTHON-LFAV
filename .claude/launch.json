@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "tarea1-streamlit",
+      "runtimeExecutable": ".venv/Scripts/python.exe",
+      "runtimeArgs": ["-m", "streamlit", "run", "tarea1_rag_normativo/app.py", "--server.headless", "true"],
+      "port": 8501
+    }
+  ]
+}

@@ -30,6 +30,16 @@ PRICING: dict[str, list[tuple[date, dict]]] = {
     ],
 }
 
+# Precio de embeddings (Fase 4, comparación local vs API). OpenAI no publica
+# un $/MTok explícito para embeddings en su página de precios; se derivó de
+# la relación que sí publican en la guía de embeddings (developers.openai.com,
+# verificado 2026-09-18): "62,500 páginas por dólar" a ~800 tokens/página
+# para text-embedding-3-small -> 1e6 / (62500*800) = $0.02 por millón de
+# tokens.
+EMBEDDING_PRICING = {
+    "text-embedding-3-small": 0.02,  # USD por millón de tokens
+}
+
 LOG_PATH = Path(__file__).resolve().parent.parent / "logs" / "costs.log"
 
 

@@ -21,7 +21,7 @@ Se trabaja siguiendo el cronograma sugerido del enunciado, día a día.
 | 1 | 2026-09-18 | Repo creado, diagrama borrador, chequeo de fuentes, 1 archivo OECE descargado | ✅ hecho |
 | 2 | 2026-09-19 | Tarea 1: extracción y limpieza de texto, reporte de calidad, primer índice | ✅ hecho |
 | 3 | 2026-09-20 | Tarea 1: eval set, umbral, estrategia de versiones/alcance | ✅ hecho |
-| 4 | 2026-09-21 | Tarea 1: comparación de embeddings, app Streamlit | pendiente |
+| 4 | 2026-09-21 | Tarea 1: comparación de embeddings, app Streamlit | ✅ hecho |
 | 5 | 2026-09-22 | Tarea 2: 3 meses descargados, 1 fila por proceso, validación, RAG híbrido | pendiente |
 | 6 | 2026-09-23 | Tarea 2: dashboard, mapa, indicador de riesgo, README, costos, video | pendiente |
 
@@ -134,6 +134,45 @@ corrige en la Fase 1 de limpieza).
   millón de tokens (input/output) — ver `src/costs.py`. A diferencia de
   DeepSeek, Anthropic no tiene descuento por horario; se documenta en vez
   de simularlo.
+
+## Tarea 1 — Fase 4 (comparación de embeddings) y Fase 5 (app Streamlit)
+
+```bash
+.venv\Scripts\python tarea1_rag_normativo\eval\compare_embeddings.py
+.venv\Scripts\python -m streamlit run tarea1_rag_normativo\app.py
+```
+
+Comparación con el **mismo corpus** (347 fragmentos) y las mismas 20
+preguntas del eval set, dos colecciones ChromaDB independientes:
+
+| Modelo | Dimensión | Tiempo indexación | Costo | Latencia/consulta | Recall@1 | Recall@3 | Recall@5 |
+|---|---|---|---|---|---|---|---|
+| Local (multilingual-e5-base) | 768 | 120.4 s (CPU) | $0 | 0.044 s | 0.40 | 0.67 | 0.80 |
+| API (text-embedding-3-small) | 1536 | 13.7 s | $0.00207 | 0.372 s | 0.40 | 0.80 | 0.87 |
+
+Precio de `text-embedding-3-small` verificado el 2026-09-18: OpenAI no
+publica un $/MTok explícito para embeddings en su página de precios, se
+derivó de su propia guía ("62,500 páginas por dólar" a ~800 tokens/página)
+→ $0.02 por millón de tokens.
+
+**¿Cuál elegimos?** El costo por sí solo no decide nada — $0.002 por
+indexar todo el corpus es irrelevante incluso a 50x más contenido. Lo que sí
+pesa: (1) el mandato del enunciado de que el modelo principal corra local;
+(2) la **latencia por consulta**, que es la que sufre el usuario en cada
+pregunta — el modelo local responde ~8x más rápido porque no depende de red;
+(3) a cambio, la API tiene mejor Recall@3/@5 y indexa más rápido (paralelismo
+en la nube vs. CPU de una laptop). Para este caso de uso (una MYPE haciendo
+preguntas una a la vez, en una app que debe poder demostrarse sin depender
+de que la red esté disponible) el modelo **local** es la elección correcta
+para producción; la API queda documentada como techo de referencia de
+calidad de recuperación.
+
+- **App Streamlit**: `app.py` es la única capa que importa Streamlit en todo
+  el proyecto; solo llama a `engine.answer()`. Carga el índice ya existente
+  (`get_or_create_collection`, nunca reconstruye embeddings al iniciar).
+  Pestaña "Preguntar" (respuesta, fragmentos citados con similitud,
+  abstención, costo) y pestaña "Calidad y evaluación" (reportes de las
+  Fases 1, 2 y 4 renderizados desde `data/processed/`).
 
 ## Tarea 2 — Fase 1: adquisición
 

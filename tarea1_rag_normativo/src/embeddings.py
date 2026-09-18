@@ -66,9 +66,11 @@ class OpenAIEmbeddings(EmbeddingModel):
         self.name = model_name
         self.dimension = 1536
         self._client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
+        self.total_tokens_used = 0  # acumulado real, según usage.total_tokens de la API
 
     def _embed(self, texts: list[str]) -> list[list[float]]:
         resp = self._client.embeddings.create(model=self.name, input=texts)
+        self.total_tokens_used += resp.usage.total_tokens
         return [d.embedding for d in resp.data]
 
     def embed_queries(self, texts: list[str]) -> list[list[float]]:

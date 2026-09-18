@@ -22,13 +22,17 @@ CHROMA_DIR = str(PROCESSED_DIR.parent / "chroma_db")
 COLLECTION_NAME = "ley_contrataciones"
 
 
-def get_collection():
+def get_collection(name: str = COLLECTION_NAME):
     client = chromadb.PersistentClient(path=CHROMA_DIR)
-    return client.get_or_create_collection(COLLECTION_NAME, metadata={"hnsw:space": "cosine"})
+    return client.get_or_create_collection(name, metadata={"hnsw:space": "cosine"})
 
 
-def build_index(fragments: list[dict], model: LocalEmbeddings, batch_size: int = 64):
-    collection = get_collection()
+def build_index(fragments: list[dict], model, collection_name: str = COLLECTION_NAME, batch_size: int = 64):
+    """`model` es cualquier implementación de `EmbeddingModel` (local o API)
+    -- ver embeddings.py. Cambiar de modelo es pasar otra instancia y otro
+    `collection_name`, no tocar esta función (Fase 4: comparación local vs
+    OpenAI usa exactamente esta misma función con `OpenAIEmbeddings`)."""
+    collection = get_collection(collection_name)
 
     existing_ids = set(collection.get(ids=[f["id"] for f in fragments])["ids"])
     pending = [f for f in fragments if f["id"] not in existing_ids]
@@ -53,7 +57,7 @@ def build_index(fragments: list[dict], model: LocalEmbeddings, batch_size: int =
         )
         print(f"  indexados {min(i + batch_size, len(pending))}/{len(pending)}")
 
-    print(f"Colección '{COLLECTION_NAME}' -> {collection.count()} fragmentos totales")
+    print(f"Colección '{collection_name}' -> {collection.count()} fragmentos totales")
     return collection
 
 
