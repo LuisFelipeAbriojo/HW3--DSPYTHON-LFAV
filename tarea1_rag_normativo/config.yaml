@@ -1,0 +1,21 @@
+# Configuración de la Tarea 1 (RAG normativo). Nada de esto va hardcodeado
+# en el código: rutas, modelos, tamaños de chunk, umbral y mensajes se leen
+# de aquí. Credenciales van en .env (nunca aquí).
+
+paths:
+  raw_dir: "data/raw"
+  processed_dir: "data/processed"
+  logs_dir: "logs"
+  chroma_dir: "chroma_db"
+
+llm:
+  provider: "anthropic"
+  model: "claude-sonnet-5"          # se ajusta en Fase 3 según costo/latencia observados
+
+embeddings:
+  local_model: "TBD-fase2"          # se define con evidencia en Fase 2 (sentence-transformers)
+  api_model: "text-embedding-3-small"  # OpenAI, para comparación obligatoria de Fase 4
+
+# El resto (chunk_size, chunk_overlap, umbral de similitud, prompts,
+# mensajes de abstención) se agrega en las Fases 2 y 3 con evidencia,
+# no por defecto.

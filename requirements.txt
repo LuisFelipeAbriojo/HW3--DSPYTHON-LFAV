@@ -1,0 +1,11 @@
+pdfplumber
+pypdf
+requests
+python-dotenv
+pyyaml
+pandas
+sentence-transformers
+chromadb
+streamlit
+anthropic
+openai

@@ -1,0 +1,470 @@
+[
+  {
+    "archivo": "Ley_32069_consolidada.pdf",
+    "documento": "Ley N.° 32069, Ley General de Contrataciones Públicas",
+    "tipo": "ley",
+    "version": "Consolidada con modificaciones posteriores hasta el 19-07-2026",
+    "fuente": "https://www.gob.pe/institucion/osce/colecciones/45029-ley-n-32069-ley-general-de-contrataciones-publicas",
+    "fecha_descarga": "2026-09-18",
+    "obligatorio": true,
+    "existe": true,
+    "num_paginas": 63,
+    "total_caracteres": 214374,
+    "promedio_caracteres_por_pagina": 3402.8,
+    "paginas_sin_texto": [],
+    "paginas_dos_columnas": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59,
+      60,
+      61,
+      62,
+      63
+    ],
+    "orden_lectura_ok": false,
+    "paginas_por_pagina": [
+      {
+        "pagina": 1,
+        "caracteres": 2923
+      },
+      {
+        "pagina": 2,
+        "caracteres": 2481
+      },
+      {
+        "pagina": 3,
+        "caracteres": 3502
+      },
+      {
+        "pagina": 4,
+        "caracteres": 4136
+      },
+      {
+        "pagina": 5,
+        "caracteres": 4190
+      },
+      {
+        "pagina": 6,
+        "caracteres": 4043
+      },
+      {
+        "pagina": 7,
+        "caracteres": 4004
+      },
+      {
+        "pagina": 8,
+        "caracteres": 3057
+      },
+      {
+        "pagina": 9,
+        "caracteres": 3638
+      },
+      {
+        "pagina": 10,
+        "caracteres": 3026
+      },
+      {
+        "pagina": 11,
+        "caracteres": 2288
+      },
+      {
+        "pagina": 12,
+        "caracteres": 3213
+      },
+      {
+        "pagina": 13,
+        "caracteres": 2594
+      },
+      {
+        "pagina": 14,
+        "caracteres": 2788
+      },
+      {
+        "pagina": 15,
+        "caracteres": 3068
+      },
+      {
+        "pagina": 16,
+        "caracteres": 3917
+      },
+      {
+        "pagina": 17,
+        "caracteres": 3236
+      },
+      {
+        "pagina": 18,
+        "caracteres": 3045
+      },
+      {
+        "pagina": 19,
+        "caracteres": 3207
+      },
+      {
+        "pagina": 20,
+        "caracteres": 3079
+      },
+      {
+        "pagina": 21,
+        "caracteres": 3714
+      },
+      {
+        "pagina": 22,
+        "caracteres": 3629
+      },
+      {
+        "pagina": 23,
+        "caracteres": 3297
+      },
+      {
+        "pagina": 24,
+        "caracteres": 3798
+      },
+      {
+        "pagina": 25,
+        "caracteres": 3057
+      },
+      {
+        "pagina": 26,
+        "caracteres": 3733
+      },
+      {
+        "pagina": 27,
+        "caracteres": 3279
+      },
+      {
+        "pagina": 28,
+        "caracteres": 3348
+      },
+      {
+        "pagina": 29,
+        "caracteres": 3709
+      },
+      {
+        "pagina": 30,
+        "caracteres": 3025
+      },
+      {
+        "pagina": 31,
+        "caracteres": 3727
+      },
+      {
+        "pagina": 32,
+        "caracteres": 3160
+      },
+      {
+        "pagina": 33,
+        "caracteres": 3250
+      },
+      {
+        "pagina": 34,
+        "caracteres": 2899
+      },
+      {
+        "pagina": 35,
+        "caracteres": 3372
+      },
+      {
+        "pagina": 36,
+        "caracteres": 3406
+      },
+      {
+        "pagina": 37,
+        "caracteres": 3245
+      },
+      {
+        "pagina": 38,
+        "caracteres": 3927
+      },
+      {
+        "pagina": 39,
+        "caracteres": 3317
+      },
+      {
+        "pagina": 40,
+        "caracteres": 2996
+      },
+      {
+        "pagina": 41,
+        "caracteres": 3589
+      },
+      {
+        "pagina": 42,
+        "caracteres": 3748
+      },
+      {
+        "pagina": 43,
+        "caracteres": 3440
+      },
+      {
+        "pagina": 44,
+        "caracteres": 3279
+      },
+      {
+        "pagina": 45,
+        "caracteres": 3680
+      },
+      {
+        "pagina": 46,
+        "caracteres": 3813
+      },
+      {
+        "pagina": 47,
+        "caracteres": 3155
+      },
+      {
+        "pagina": 48,
+        "caracteres": 3219
+      },
+      {
+        "pagina": 49,
+        "caracteres": 3911
+      },
+      {
+        "pagina": 50,
+        "caracteres": 3727
+      },
+      {
+        "pagina": 51,
+        "caracteres": 3707
+      },
+      {
+        "pagina": 52,
+        "caracteres": 3915
+      },
+      {
+        "pagina": 53,
+        "caracteres": 3778
+      },
+      {
+        "pagina": 54,
+        "caracteres": 3461
+      },
+      {
+        "pagina": 55,
+        "caracteres": 3459
+      },
+      {
+        "pagina": 56,
+        "caracteres": 3853
+      },
+      {
+        "pagina": 57,
+        "caracteres": 3613
+      },
+      {
+        "pagina": 58,
+        "caracteres": 3889
+      },
+      {
+        "pagina": 59,
+        "caracteres": 3847
+      },
+      {
+        "pagina": 60,
+        "caracteres": 3585
+      },
+      {
+        "pagina": 61,
+        "caracteres": 3622
+      },
+      {
+        "pagina": 62,
+        "caracteres": 3596
+      },
+      {
+        "pagina": 63,
+        "caracteres": 1165
+      }
+    ],
+    "muestra_pagina_media": "Artículo 66. Adelantos\n66.1. La entidad contratante puede entregar adelantos al contratista con la finalidad de otorgarle\nfinanciamiento o liquidez para la ejecución del contrato en las condiciones establecidas y\nfundamentadas en la estrategia de contratación.\n66.2. El adelanto puede ser:\na) Directo.\nb) Para materiales e insumos, equipamiento y mobiliario.\nc) Otros que sean establecidos en el reglamento.\n66.3. Los documentos del procedimiento de selección pueden establecer adelantos directos al\ncontratista, los que en ningún caso exceden en conjunto del 30 % del monto del contrato original.\n66",
+    "usable": true
+  },
+  {
+    "archivo": "DS_001-2026-EF.pdf",
+    "documento": "Decreto Supremo N.° 001-2026-EF",
+    "tipo": "decreto_modificatorio_reglamento",
+    "version": "Publicado 08-01-2026",
+    "fuente": "https://busquedas.elperuano.pe/dispositivo/NL/2474920-3",
+    "fecha_descarga": "2026-09-18",
+    "obligatorio": true,
+    "existe": true,
+    "num_paginas": 16,
+    "total_caracteres": 110529,
+    "promedio_caracteres_por_pagina": 6908.1,
+    "paginas_sin_texto": [],
+    "paginas_dos_columnas": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16
+    ],
+    "orden_lectura_ok": false,
+    "paginas_por_pagina": [
+      {
+        "pagina": 1,
+        "caracteres": 7902
+      },
+      {
+        "pagina": 2,
+        "caracteres": 6859
+      },
+      {
+        "pagina": 3,
+        "caracteres": 6862
+      },
+      {
+        "pagina": 4,
+        "caracteres": 6331
+      },
+      {
+        "pagina": 5,
+        "caracteres": 7308
+      },
+      {
+        "pagina": 6,
+        "caracteres": 7480
+      },
+      {
+        "pagina": 7,
+        "caracteres": 7077
+      },
+      {
+        "pagina": 8,
+        "caracteres": 7096
+      },
+      {
+        "pagina": 9,
+        "caracteres": 7073
+      },
+      {
+        "pagina": 10,
+        "caracteres": 6805
+      },
+      {
+        "pagina": 11,
+        "caracteres": 6653
+      },
+      {
+        "pagina": 12,
+        "caracteres": 6873
+      },
+      {
+        "pagina": 13,
+        "caracteres": 6574
+      },
+      {
+        "pagina": 14,
+        "caracteres": 6837
+      },
+      {
+        "pagina": 15,
+        "caracteres": 6358
+      },
+      {
+        "pagina": 16,
+        "caracteres": 6441
+      }
+    ],
+    "muestra_pagina_media": "El Peruano / Jueves 8 de enero de 2026 NORMAS LEGALES 41\n“Artículo 194. Prestaciones adicionales de obra la obra, no siendo necesario apercibimiento alguno al\nbajo el sistema de entrega solo construcción contratista de obra.”\n(…)\n194.3. No corresponde suscribir una adenda al contrato “Artículo 211. Valorización de la supervisión de la\npor la aprobación de la prestación adicional, bastando obra\ncon su publicación en la Pladicop para que surta todos Las valorizaciones se realizan mensualmente y\nsus efectos. Se encuentra prohibida la aprobación de son consideradas pagos a cuenta. Las bases pueden",
+    "usable": true
+  },
+  {
+    "archivo": "DL_1715.pdf",
+    "documento": "Decreto Legislativo N.° 1715 (modifica art. 85.1.e de la Ley 32069)",
+    "tipo": "decreto_legislativo_modificatorio_ley",
+    "version": "Publicado 04-02-2026",
+    "fuente": "https://busquedas.elperuano.pe/dispositivo/NL/2483559-7",
+    "fecha_descarga": "2026-09-18",
+    "obligatorio": false,
+    "existe": true,
+    "num_paginas": 2,
+    "total_caracteres": 13036,
+    "promedio_caracteres_por_pagina": 6518.0,
+    "paginas_sin_texto": [],
+    "paginas_dos_columnas": [
+      1,
+      2
+    ],
+    "orden_lectura_ok": false,
+    "paginas_por_pagina": [
+      {
+        "pagina": 1,
+        "caracteres": 6769
+      },
+      {
+        "pagina": 2,
+        "caracteres": 6267
+      }
+    ],
+    "muestra_pagina_media": "El Peruano / Miércoles 4 de febrero de 2026 NORMAS LEGALES 17\nejecución de obras en salud, educación, infraestructura DECRETO LEGISLATIVO QUE MODIFICA EL\nhidráulica, infraestructura vial y saneamiento, y la\nDECRETO LEGISLATIVO Nº 813,\ngestión y conservación por niveles de servicio para el\nmantenimiento vial”. LEY PENAL TRIBUTARIA\nArtículo 4.- Refrendo\nArtículo 1.- Objeto y finalidad\nEl presente Decreto Legislativo es refrendado por El presente Decreto Legislativo tiene por objeto\nel Presidente del Consejo de Ministros y la Ministra de\nmodificar el Decreto Legislativo N° 813, Decreto\nEconomía y",
+    "usable": true
+  }
+]

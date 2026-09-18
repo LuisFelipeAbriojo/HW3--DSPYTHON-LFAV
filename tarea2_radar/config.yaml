@@ -1,0 +1,19 @@
+# Configuración de la Tarea 2 (RAG Radar). Rutas, fuente y parámetros de
+# adquisición viven aquí, no en el código.
+
+paths:
+  raw_dir: "data/raw"
+  processed_dir: "data/processed"
+  outputs_dir: "data/outputs"
+  logs_dir: "logs"
+  chroma_dir: "chroma_db"
+
+acquisition:
+  source: "seace_v3"
+  bulk_base_url: "https://contratacionesabiertas.oece.gob.pe/api/v1"
+  year: 2026
+  months: ["06", "07", "08"]   # se completa en el Día 5 (mínimo 3 meses)
+  format: "csv"
+
+# Umbral de similitud, filtros y modelo de embeddings se agregan en la
+# Fase 3 (RAG híbrido), reusando/recalibrando lo definido en la Tarea 1.

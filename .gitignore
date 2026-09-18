@@ -1,0 +1,23 @@
+# secrets
+.env
+
+# python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# streamlit
+.streamlit/secrets.toml
+
+# vector store persisted db
+chroma_db/
+*.sqlite3
+
+# large bulk data (Task 2 monthly files) - keep raw Task 1 PDFs (small, official)
+tarea2_radar/data/raw/*
+!tarea2_radar/data/raw/.gitkeep
+
+# execution logs ARE a required deliverable - keep them tracked, not ignored
+
+.ipynb_checkpoints/
