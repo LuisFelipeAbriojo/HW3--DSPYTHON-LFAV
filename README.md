@@ -20,7 +20,7 @@ Se trabaja siguiendo el cronograma sugerido del enunciado, día a día.
 |---|---|---|---|
 | 1 | 2026-09-18 | Repo creado, diagrama borrador, chequeo de fuentes, 1 archivo OECE descargado | ✅ hecho |
 | 2 | 2026-09-19 | Tarea 1: extracción y limpieza de texto, reporte de calidad, primer índice | ✅ hecho |
-| 3 | 2026-09-20 | Tarea 1: eval set, umbral, estrategia de versiones/alcance | pendiente |
+| 3 | 2026-09-20 | Tarea 1: eval set, umbral, estrategia de versiones/alcance | ✅ hecho |
 | 4 | 2026-09-21 | Tarea 1: comparación de embeddings, app Streamlit | pendiente |
 | 5 | 2026-09-22 | Tarea 2: 3 meses descargados, 1 fila por proceso, validación, RAG híbrido | pendiente |
 | 6 | 2026-09-23 | Tarea 2: dashboard, mapa, indicador de riesgo, README, costos, video | pendiente |
@@ -95,6 +95,45 @@ corrige en la Fase 1 de limpieza).
   (347 fragmentos). `build_index.py` es idempotente (IDs deterministas
   `doc_id_pPAGINA_cN`, upsert) y resumible (solo embebe los IDs que faltan);
   verificado corriéndolo dos veces seguidas sin duplicar nada.
+
+## Tarea 1 — Fase 3: motor RAG (umbral, versiones, alcance, costo)
+
+```bash
+.venv\Scripts\python tarea1_rag_normativo\eval\run_retrieval_eval.py   # Recall@k + sweep de umbral, sin LLM
+```
+
+- **Arquitectura**: `src/engine.py` expone una única función `answer(pregunta) -> RAGResult`
+  (answer, sources con documento/página/similitud, abstained, tokens, cost, error).
+  No importa Streamlit ni ninguna librería de interfaz — verificado con:
+  ```bash
+  grep -n "^import\|^from" tarea1_rag_normativo/src/engine.py
+  ```
+- **Umbral de abstención (evidencia)**: con `intfloat/multilingual-e5-base`, las
+  similitudes coseno de las 20 preguntas del eval set (15 in-domain + 5 fuera
+  de dominio) caen **todas entre 0.76 y 0.89** — no hay un umbral que separe
+  limpiamente ambos grupos (mismo fenómeno que reporta el enunciado con el
+  ejemplo del ceviche). Sweep completo:
+  [`retrieval_eval_report.md`](tarea1_rag_normativo/data/processed/retrieval_eval_report.md).
+  Elegido **0.78**: filtra el caso más obvio sin sacrificar ninguna pregunta
+  in-domain. Las preguntas fuera de dominio pero temáticamente cercanas
+  (tributario, Reglamento) sí pasan el filtro numérico — se cubren con una
+  **segunda capa**: el prompt exige que el modelo responda `NO_RESPONDE` si
+  el contexto no alcanza, aunque la similitud haya pasado el umbral.
+- **Versiones (ejemplo real, funciona)**: la pregunta sobre el artículo 85
+  (medidas cautelares) recupera fragmentos de la Ley 32069 (p. 42) y del
+  Decreto Legislativo 1715 (p. 1), y la respuesta cita ambos y explica que
+  "infraestructura hidráulica" fue incorporada por el DL 1715.
+- **Alcance del corpus (ejemplo real, funciona)**: la pregunta sobre plazos
+  del expediente técnico según el Reglamento pasa el umbral de similitud
+  (0.867 > 0.78, hay fragmentos parecidos) pero el modelo responde
+  `NO_RESPONDE` porque el contexto no cubre el Reglamento — el motor lo
+  traduce a `abstained=True` con el mensaje configurado en `config.yaml`.
+- **Costo**: cada llamada se registra en `logs/costs.log` (fecha, modelo,
+  tokens in/out, latencia, costo, éxito/error). Precios de Anthropic
+  verificados en claude.com/pricing el 2026-09-18: Sonnet 5 = $2/$10 por
+  millón de tokens (input/output) — ver `src/costs.py`. A diferencia de
+  DeepSeek, Anthropic no tiene descuento por horario; se documenta en vez
+  de simularlo.
 
 ## Tarea 2 — Fase 1: adquisición
 

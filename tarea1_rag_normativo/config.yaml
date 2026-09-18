@@ -11,6 +11,7 @@ paths:
 llm:
   provider: "anthropic"
   model: "claude-sonnet-5"          # se ajusta en Fase 3 según costo/latencia observados
+  pricing_verified_date: "2026-09-18"  # precios verificados en claude.com/pricing (ver src/costs.py)
 
 embeddings:
   local_model: "intfloat/multilingual-e5-base"  # dim 768, prefijos query:/passage:, max 512 tokens
@@ -22,5 +23,50 @@ chunking:
                   # y más contexto completo por cita (~237 tokens prom., máx. 340,
                   # holgado bajo el límite de 512 tokens del modelo)
 
-# El umbral de similitud, prompts y mensajes de abstención se agregan en la
-# Fase 3 con evidencia, no por defecto.
+retrieval:
+  top_k: 5
+  similarity_threshold: 0.78
+  # Evidencia (Fase 3, sweep completo en eval/../retrieval_eval_report.md):
+  # con intfloat/multilingual-e5-base las similitudes coseno de las 20
+  # preguntas del eval set (15 in-domain + 5 fuera de dominio) caen TODAS
+  # entre 0.76 y 0.89 -- no hay un umbral que separe limpiamente ambos
+  # grupos (mismo fenómeno de anisotropía que reporta el enunciado con el
+  # ejemplo del ceviche). 0.78 es el punto donde se filtra el caso más
+  # obvio (pregunta totalmente ajena, similitud 0.763) sin sacrificar
+  # NINGUNA de las 15 preguntas in-domain (0 abstenciones incorrectas).
+  # Preguntas fuera de dominio pero temáticamente cercanas (tributario,
+  # reglamento) siguen pasando el filtro de similitud -- se abordan con una
+  # segunda capa: la instrucción del prompt exige que el modelo declare
+  # abstención si el contexto recuperado no responde realmente la pregunta,
+  # en vez de confiar solo en el umbral numérico.
+
+messages:
+  abstention: >-
+    No encontré información suficiente en los documentos indexados
+    (Ley N.° 32069, Decreto Supremo N.° 001-2026-EF y Decreto Legislativo
+    N.° 1715) para responder esta pregunta con confianza. Es posible que la
+    respuesta esté en el Reglamento completo u otra norma que no forma
+    parte de este corpus.
+  api_error: >-
+    Ocurrió un error al consultar el modelo generador. No se generó
+    ninguna respuesta.
+
+prompts:
+  system: >-
+    Eres un asistente que responde preguntas sobre contrataciones públicas
+    del Perú EXCLUSIVAMENTE a partir de los fragmentos de contexto que se
+    te entregan a continuación. No uses conocimiento externo ni supuestos.
+
+    Reglas obligatorias:
+    1. Cada afirmación debe ir acompañada de su cita entre paréntesis, con
+       el formato (Documento, página N).
+    2. Si dos fragmentos de documentos distintos tratan el mismo artículo
+       (por ejemplo, una ley y un decreto que la modifica), indica
+       explícitamente cuál es el texto vigente y qué norma introdujo el
+       cambio, citando ambas fuentes.
+    3. Si el contexto entregado no contiene información suficiente para
+       responder con certeza -aunque parezca relacionado-, responde
+       ÚNICAMENTE con el texto "NO_RESPONDE" seguido de una razón breve.
+       No inventes ni completes con conocimiento propio. Esto incluye
+       preguntas que solo el Reglamento (no indexado) podría responder.
+    4. Sé conciso: responde en 2 a 5 oraciones, en español.
