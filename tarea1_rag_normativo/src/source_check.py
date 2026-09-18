@@ -9,57 +9,42 @@ Uso:
     .venv/Scripts/python tarea1_rag_normativo/src/source_check.py
 """
 import json
-from pathlib import Path
 
 import pdfplumber
 
-RAW_DIR = Path(__file__).resolve().parent.parent / "data" / "raw"
-REPORT_DIR = Path(__file__).resolve().parent.parent / "data" / "processed"
+from documents import DOCS, RAW_DIR, PROCESSED_DIR as REPORT_DIR
+
 REPORT_DIR.mkdir(parents=True, exist_ok=True)
 
-DOCS = [
-    {
-        "archivo": "Ley_32069_consolidada.pdf",
-        "documento": "Ley N.° 32069, Ley General de Contrataciones Públicas",
-        "tipo": "ley",
-        "version": "Consolidada con modificaciones posteriores hasta el 19-07-2026",
-        "fuente": "https://www.gob.pe/institucion/osce/colecciones/45029-ley-n-32069-ley-general-de-contrataciones-publicas",
-        "fecha_descarga": "2026-09-18",
-        "obligatorio": True,
-    },
-    {
-        "archivo": "DS_001-2026-EF.pdf",
-        "documento": "Decreto Supremo N.° 001-2026-EF",
-        "tipo": "decreto_modificatorio_reglamento",
-        "version": "Publicado 08-01-2026",
-        "fuente": "https://busquedas.elperuano.pe/dispositivo/NL/2474920-3",
-        "fecha_descarga": "2026-09-18",
-        "obligatorio": True,
-    },
-    {
-        "archivo": "DL_1715.pdf",
-        "documento": "Decreto Legislativo N.° 1715 (modifica art. 85.1.e de la Ley 32069)",
-        "tipo": "decreto_legislativo_modificatorio_ley",
-        "version": "Publicado 04-02-2026",
-        "fuente": "https://busquedas.elperuano.pe/dispositivo/NL/2483559-7",
-        "fecha_descarga": "2026-09-18",
-        "obligatorio": False,
-    },
-]
 
-
-def detect_two_columns(page) -> bool:
-    """Heuristic: a real mid-page gap in word x0 positions, present on most
-    lines, indicates a two-column layout that naive top-to-bottom text
-    extraction will read in the wrong order (interleaving both columns)."""
+def detect_two_columns(page, gap_threshold: float = 50.0, line_ratio_threshold: float = 0.02) -> bool:
+    """Heuristic: group words by their vertical position (`top`) the way
+    pdfplumber's extract_text() does, then check the horizontal gap between
+    consecutive words within each such "line". A single justified column
+    never leaves a gap much bigger than normal word spacing (a few points).
+    A page laid out in two columns, once both columns get merged into one
+    line by top-alignment, shows a large gap where the first column ends and
+    the second begins — that gap is the tell, not just "words appear on both
+    halves of the page" (which is also true of any single wide column)."""
     words = page.extract_words()
     if len(words) < 20:
         return False
-    mid_x = page.width / 2
-    left = sum(1 for w in words if w["x0"] < mid_x - 15)
-    right = sum(1 for w in words if w["x0"] > mid_x + 15)
-    # both halves must carry a meaningful, comparable share of the words
-    return left > 10 and right > 10 and min(left, right) / max(left, right) > 0.3
+
+    lines: dict[int, list] = {}
+    for w in words:
+        lines.setdefault(round(w["top"]), []).append(w)
+
+    flagged, total = 0, 0
+    for ws in lines.values():
+        if len(ws) < 2:
+            continue
+        ws = sorted(ws, key=lambda w: w["x0"])
+        max_gap = max(b["x0"] - a["x1"] for a, b in zip(ws, ws[1:]))
+        total += 1
+        if max_gap > gap_threshold:
+            flagged += 1
+
+    return total > 0 and (flagged / total) > line_ratio_threshold
 
 
 def check_pdf(meta: dict) -> dict:

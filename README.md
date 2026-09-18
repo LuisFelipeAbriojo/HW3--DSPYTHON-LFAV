@@ -19,7 +19,7 @@ Se trabaja siguiendo el cronograma sugerido del enunciado, día a día.
 | Día | Fecha | Checkpoint | Estado |
 |---|---|---|---|
 | 1 | 2026-09-18 | Repo creado, diagrama borrador, chequeo de fuentes, 1 archivo OECE descargado | ✅ hecho |
-| 2 | 2026-09-19 | Tarea 1: extracción y limpieza de texto, reporte de calidad, primer índice | pendiente |
+| 2 | 2026-09-19 | Tarea 1: extracción y limpieza de texto, reporte de calidad, primer índice | ✅ hecho |
 | 3 | 2026-09-20 | Tarea 1: eval set, umbral, estrategia de versiones/alcance | pendiente |
 | 4 | 2026-09-21 | Tarea 1: comparación de embeddings, app Streamlit | pendiente |
 | 5 | 2026-09-22 | Tarea 2: 3 meses descargados, 1 fila por proceso, validación, RAG híbrido | pendiente |
@@ -30,9 +30,13 @@ Se trabaja siguiendo el cronograma sugerido del enunciado, día a día.
 ```bash
 python -m venv .venv
 .venv\Scripts\activate
+pip install torch --index-url https://download.pytorch.org/whl/cpu
 pip install -r requirements.txt
 copy .env.example .env
 ```
+
+PyTorch se instala aparte, apuntando al índice CPU-only de PyTorch, para no
+descargar los paquetes CUDA (varios GB) que no se usan en esta laptop.
 
 Completa `.env` con tus propias claves (`ANTHROPIC_API_KEY`, `OPENAI_API_KEY`).
 Nunca se commitea `.env` (está en `.gitignore`).
@@ -60,6 +64,37 @@ páginas, caracteres/página, páginas sin texto y **páginas a dos columnas**
 (hallazgo: los PDFs de El Peruano usan diagramación a dos columnas; la
 extracción ingenua intercala ambas columnas en el orden equivocado — se
 corrige en la Fase 1 de limpieza).
+
+## Tarea 1 — Fase 1 (limpieza) y Fase 2 (chunking, embeddings, índice)
+
+```bash
+.venv\Scripts\python tarea1_rag_normativo\src\extract.py
+.venv\Scripts\python tarea1_rag_normativo\src\compare_chunk_sizes.py
+.venv\Scripts\python tarea1_rag_normativo\src\build_index.py
+```
+
+- **Limpieza**: `extract.py` recorta geométricamente la cabecera de El
+  Peruano (banda superior de cada página) y extrae cada columna por
+  separado en los documentos a dos columnas, en vez de dejar que
+  `extract_text()` las intercale. Ejemplo antes/después:
+  [`cleaning_before_after.md`](tarea1_rag_normativo/data/processed/cleaning_before_after.md).
+  Reporte de calidad post-limpieza:
+  [`extraction_quality_report.md`](tarea1_rag_normativo/data/processed/extraction_quality_report.md).
+- **Chunking**: se trocea página por página (nunca documento completo
+  concatenado) para no perder la trazabilidad de página. Se compararon 3
+  configuraciones con un eval set provisional de 8 preguntas
+  (`eval/preguntas.csv`) — resultado en
+  [`chunk_size_comparison.md`](tarea1_rag_normativo/data/processed/chunk_size_comparison.md).
+  Elegido: **1200 caracteres / 150 de overlap** (empata en Recall con 800/100
+  pero con la mitad de fragmentos y más contexto completo por cita).
+- **Embeddings locales**: `intfloat/multilingual-e5-base` (dim. 768, prefijos
+  `query:`/`passage:` obligatorios según su documentación, máx. 512 tokens de
+  entrada). Con chunks de 1200 caracteres el promedio es ~237 tokens y el
+  máximo observado 340 — margen holgado.
+- **Índice**: ChromaDB persistente en `tarea1_rag_normativo/chroma_db/`
+  (347 fragmentos). `build_index.py` es idempotente (IDs deterministas
+  `doc_id_pPAGINA_cN`, upsert) y resumible (solo embebe los IDs que faltan);
+  verificado corriéndolo dos veces seguidas sin duplicar nada.
 
 ## Tarea 2 — Fase 1: adquisición
 

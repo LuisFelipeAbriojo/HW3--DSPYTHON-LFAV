@@ -2,7 +2,7 @@
 
 | Documento | Obligatorio | Páginas | Prom. caracteres/página | Páginas sin texto | Páginas a 2 columnas | ¿Usable? | ¿Orden de lectura OK? |
 |---|---|---|---|---|---|---|---|
-| Ley N.° 32069, Ley General de Contrataciones Públicas | Sí | 63 | 3402.8 | 0 | 63 | Sí | NO — requiere extracción por columna |
+| Ley N.° 32069, Ley General de Contrataciones Públicas | Sí | 63 | 3402.8 | 0 | 2 | Sí | NO — requiere extracción por columna |
 | Decreto Supremo N.° 001-2026-EF | Sí | 16 | 6908.1 | 0 | 16 | Sí | NO — requiere extracción por columna |
 | Decreto Legislativo N.° 1715 (modifica art. 85.1.e de la Ley 32069) | No (opcional) | 2 | 6518.0 | 0 | 2 | Sí | NO — requiere extracción por columna |
 

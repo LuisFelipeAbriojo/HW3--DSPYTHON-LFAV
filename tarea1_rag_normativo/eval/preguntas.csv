@@ -1,0 +1,11 @@
+id,pregunta,tipo,documento_esperado,paginas_esperadas,categoria,notas
+q01,"¿Qué reglas rigen las medidas cautelares sobre contratos de obra según el artículo 85, y qué sector se incluyó por una modificación reciente?",in_domain,ley_32069,"42,43",version,"La consolidada ya anota inline que DL 1715 agregó 'infraestructura hidráulica' al literal e); DL_1715 p1-2 es la fuente de la modificación"
+q02,"¿En qué porcentaje máximo del monto del contrato puede otorgarse un adelanto directo al contratista?",in_domain,ley_32069,32,estandar,"Art. 66.3: no exceden en conjunto del 30%"
+q03,"Si tengo una empresa pequeña, ¿puedo evitar dar una carta fianza como garantía de cumplimiento?",in_domain,ley_32069,29,mype_phrasing,"Art. 61.3: MYPE puede ofrecer retención de pago en vez de garantía financiera"
+q04,"¿Qué pasa si el contratista incumple y se le aplica una penalidad?",in_domain,ley_32069,28,estandar,"revisar contenido exacto de la página al construir el eval definitivo (Día 3)"
+q05,"¿Cómo se define un procedimiento de selección según la ley?",in_domain,ley_32069,3,estandar,""
+q06,"Estoy por presentarme a un concurso del Estado, ¿qué se considera 'contratación pública' para efectos de esta ley?",in_domain,ley_32069,3,mype_phrasing,""
+q07,"¿Qué modificó el Decreto Supremo 001-2026-EF sobre las prestaciones adicionales de obra bajo el sistema de solo construcción?",in_domain,ds_001_2026_ef,9,estandar,"Art. 194 del Reglamento, modificado por el decreto"
+q08,"¿Qué literal del artículo 85.1 de la Ley 32069 modificó el Decreto Legislativo 1715?",in_domain,dl_1715,"1,2",version,""
+q09,"¿Cómo cocino un ceviche?",out_domain,,,fuera_de_dominio,"pregunta de control, sin relación con contrataciones públicas"
+q10,"¿Cuál es el plazo máximo que tiene la Entidad para aprobar el expediente técnico de una obra, según el Reglamento?",out_domain,,,fuera_de_dominio_cercano,"solo el Reglamento (no indexado) respondería esto; sirve para probar el límite de alcance del corpus"

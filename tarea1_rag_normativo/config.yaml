@@ -13,9 +13,14 @@ llm:
   model: "claude-sonnet-5"          # se ajusta en Fase 3 según costo/latencia observados
 
 embeddings:
-  local_model: "TBD-fase2"          # se define con evidencia en Fase 2 (sentence-transformers)
-  api_model: "text-embedding-3-small"  # OpenAI, para comparación obligatoria de Fase 4
+  local_model: "intfloat/multilingual-e5-base"  # dim 768, prefijos query:/passage:, max 512 tokens
+  api_model: "text-embedding-3-small"           # OpenAI, para comparación obligatoria de Fase 4
 
-# El resto (chunk_size, chunk_overlap, umbral de similitud, prompts,
-# mensajes de abstención) se agrega en las Fases 2 y 3 con evidencia,
-# no por defecto.
+chunking:
+  size: 1200      # caracteres; ver eval/../chunk_size_comparison.md (Fase 2)
+  overlap: 150    # empate en Recall con 800/100, pero con la mitad de fragmentos
+                  # y más contexto completo por cita (~237 tokens prom., máx. 340,
+                  # holgado bajo el límite de 512 tokens del modelo)
+
+# El umbral de similitud, prompts y mensajes de abstención se agregan en la
+# Fase 3 con evidencia, no por defecto.
