@@ -24,6 +24,7 @@ RECORD_COLUMNS = {
     "compiledRelease/tender/description": "descripcion",
     "compiledRelease/tender/mainProcurementCategory": "categoria",
     "compiledRelease/tender/procurementMethod": "metodo_contratacion",
+    "compiledRelease/tender/procurementMethodDetails": "procedimiento",
     "compiledRelease/tender/value/amount": "monto",
     "compiledRelease/tender/value/currency": "moneda",
     "compiledRelease/tender/value/amount_PEN": "monto_pen",

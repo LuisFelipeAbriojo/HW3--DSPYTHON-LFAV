@@ -312,11 +312,36 @@ julio y agosto de 2026 (3 meses, mínimo exigido).
 
 El log de costos es compartido (`tarea1_rag_normativo/logs/costs.log`) —
 ver nota más arriba. Total gastado en llamadas reales al LLM generador
-durante el desarrollo (pruebas en vivo del motor, ambas tareas): **$0.0415
-USD** (5 llamadas). Precios verificados el 2026-09-18 en claude.com/pricing (Sonnet 5:
+durante el desarrollo (pruebas en vivo del motor, ambas tareas, incluida la
+demo del vínculo entre tareas): **$0.0561 USD** (6 llamadas). Precios
+verificados el 2026-09-18 en claude.com/pricing (Sonnet 5:
 $2/$10 por millón de tokens input/output) y el 2026-09-18 en
 developers.openai.com (text-embedding-3-small: $0.02 por millón de
 tokens, derivado de su guía de embeddings).
+
+## Innovación
+
+**1. Vínculo entre tareas** (Tarea 2 → Tarea 1): en la pestaña "Preguntar"
+del dashboard de la Tarea 2, cada proceso recuperado por el RAG híbrido
+trae su `procedimiento` de selección (p.ej. "Licitación Pública"). Un
+selector + botón le pregunta directamente al motor de la Tarea 1 — el
+mismo `engine.answer()`, sin duplicar una línea de su lógica — qué dice la
+Ley N.° 32069 sobre ese procedimiento. Probado en vivo: para "Licitación
+Pública" el asistente de la Tarea 1 **se abstuvo honestamente**, porque el
+detalle operativo de ese procedimiento vive en el Reglamento (no
+indexado) — la conexión entre tareas no relaja la disciplina de
+abstención, la hereda tal cual. Implementación: `tarea2_radar/app.py`
+carga `tarea1_rag_normativo/src/engine.py` con `importlib` bajo un nombre
+propio (`engine_tarea1`) para no chocar con el módulo `engine` de la
+Tarea 2 (ambos archivos se llaman igual).
+
+**2. CI que corre el eval en cada push** (`.github/workflows/eval.yml`):
+reconstruye el índice de la Tarea 1 y corre
+`eval/run_retrieval_eval.py --min-recall3 0.55`, que falla el workflow si
+el Recall@3 cae debajo de ese mínimo (línea base observada: 0.67). Como la
+evaluación no llama al LLM generador, este chequeo es gratis y se puede
+correr en cada push sin costo ni necesidad de configurar API keys como
+secretos de GitHub.
 
 ## Estructura del repositorio
 

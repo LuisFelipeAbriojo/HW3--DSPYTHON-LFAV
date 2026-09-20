@@ -154,6 +154,27 @@ def main():
     print("\n".join(lines))
     print(f"\nGuardado: {out_path}")
 
+    return recall
+
 
 if __name__ == "__main__":
-    main()
+    import argparse
+
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--min-recall3", type=float, default=0.55,
+        help=(
+            "Recall@3 mínimo aceptable (default 0.55, por debajo del "
+            "0.67 observado como línea base -- ver README/CI). Si el "
+            "resultado cae debajo, el proceso termina con código de "
+            "salida distinto de cero para que GitHub Actions marque el "
+            "push como fallido (innovación: eval en cada push)."
+        ),
+    )
+    args = parser.parse_args()
+
+    recall = main()
+    if recall[3] < args.min_recall3:
+        print(f"\nFALLÓ: Recall@3 = {recall[3]:.2f} está por debajo del mínimo aceptado ({args.min_recall3}).")
+        raise SystemExit(1)
+    print(f"\nOK: Recall@3 = {recall[3]:.2f} >= {args.min_recall3}")

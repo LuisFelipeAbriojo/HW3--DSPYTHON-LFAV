@@ -3,7 +3,14 @@
 Solo lee artefactos precomputados (`data/processed/`) — nunca descarga
 archivos de OECE ni reconstruye el índice al cargar. La única lógica de
 RAG que toca es `engine.answer()`.
+
+Innovación: conecta las dos tareas. Un proceso recuperado por el RAG
+híbrido de la Tarea 2 trae su `procedimiento` de selección (p.ej.
+"Licitación Pública Abreviada"); con un clic, se le pregunta al motor de
+la Tarea 1 qué dice la Ley N.° 32069 sobre ese procedimiento -- el mismo
+`engine.answer()` de la Tarea 1, sin duplicar una sola línea de su lógica.
 """
+import importlib.util
 import json
 import sys
 from pathlib import Path
@@ -18,6 +25,21 @@ import engine  # noqa: E402
 
 BASE_DIR = Path(__file__).resolve().parent
 PROCESSED_DIR = BASE_DIR / "data" / "processed"
+TAREA1_SRC = BASE_DIR.parent / "tarea1_rag_normativo" / "src"
+sys.path.insert(0, str(TAREA1_SRC))
+
+
+def _load_tarea1_engine():
+    """Carga tarea1_rag_normativo/src/engine.py bajo un nombre propio
+    (`engine_tarea1`) para no chocar con el módulo `engine` de esta misma
+    Tarea 2 -- ambos archivos se llaman igual pero son motores distintos."""
+    spec = importlib.util.spec_from_file_location("engine_tarea1", TAREA1_SRC / "engine.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+engine_tarea1 = _load_tarea1_engine()
 
 st.set_page_config(page_title="RAG Radar — Contrataciones Públicas", page_icon="🗺️", layout="wide")
 
@@ -48,6 +70,12 @@ def load_report(name: str) -> str:
 @st.cache_resource
 def get_engine_ready():
     engine._engine = engine.Engine()
+    return True
+
+
+@st.cache_resource
+def get_tarea1_engine_ready():
+    engine_tarea1._engine = engine_tarea1.Engine()
     return True
 
 
@@ -127,7 +155,10 @@ else:
         )
         if st.button("Preguntar", type="primary") and pregunta:
             with st.spinner("Filtrando y buscando..."):
-                result = engine.answer(pregunta)
+                st.session_state["t2_result"] = engine.answer(pregunta)
+
+        result = st.session_state.get("t2_result")
+        if result is not None:
             st.caption(f"Filtros detectados: {result.filtros_aplicados}")
             if result.error:
                 st.error(result.error)
@@ -147,6 +178,38 @@ else:
             mc1, mc2, mc3 = st.columns(3)
             mc1.metric("Tokens", f"{result.tokens_in}+{result.tokens_out}")
             mc2.metric("Costo (USD)", f"${result.cost_usd:.5f}")
+
+            if result.sources:
+                st.divider()
+                st.subheader("🔗 Vínculo con la Tarea 1: ¿qué dice la norma?")
+                st.caption(
+                    "Elige uno de los procesos de arriba para preguntarle al "
+                    "asistente normativo de la Tarea 1 qué dice la Ley N.° 32069 "
+                    "sobre su procedimiento de selección."
+                )
+                opciones = {s.ocid: s for s in result.sources}
+                ocid_elegido = st.selectbox("Proceso", list(opciones.keys()))
+                fila = df_all[df_all["ocid"] == ocid_elegido]
+                procedimiento = fila["procedimiento"].iloc[0] if not fila.empty else None
+
+                if procedimiento and st.button("Explicar la norma aplicable"):
+                    get_tarea1_engine_ready()
+                    pregunta_t1 = (
+                        f"¿Qué es el procedimiento de selección \"{procedimiento}\" y "
+                        "qué reglas lo rigen según la Ley N.° 32069?"
+                    )
+                    with st.spinner(f"Preguntando al motor de la Tarea 1 sobre «{procedimiento}»..."):
+                        r1 = engine_tarea1.answer(pregunta_t1)
+                    st.info(f"**Procedimiento del proceso {ocid_elegido}:** {procedimiento}")
+                    if r1.abstained:
+                        st.warning(r1.answer)
+                    else:
+                        st.success(r1.answer)
+                    if r1.sources:
+                        st.caption(
+                            "Fuente (Tarea 1): "
+                            + "; ".join(f"{s.documento}, p. {s.pagina}" for s in r1.sources[:3])
+                        )
             mc3.metric("¿Abstención?", "Sí" if result.abstained else "No")
 
     with tab_tabla:

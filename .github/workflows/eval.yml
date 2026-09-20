@@ -1,0 +1,42 @@
+name: Eval Tarea 1 (Recall@3 gate)
+
+# Innovación (Task 1): corre la evaluación de recuperación de la Tarea 1 en
+# cada push y falla el workflow si el Recall@3 cae debajo del mínimo
+# aceptado. La evaluación NO llama al LLM generador (solo embeddings +
+# ChromaDB, ver eval/run_retrieval_eval.py), así que este chequeo es
+# gratis y se puede correr en cada push sin preocuparse por costo.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "tarea1_rag_normativo/**"
+      - ".github/workflows/eval.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "tarea1_rag_normativo/**"
+
+jobs:
+  eval:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: tarea1_rag_normativo
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Instalar dependencias (CPU-only)
+        run: |
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+          pip install sentence-transformers chromadb numpy
+
+      - name: Construir el índice (offline, idempotente)
+        run: python src/build_index.py
+
+      - name: Recall@k + umbral (sin LLM) -- falla si Recall@3 < 0.55
+        run: python eval/run_retrieval_eval.py --min-recall3 0.55
