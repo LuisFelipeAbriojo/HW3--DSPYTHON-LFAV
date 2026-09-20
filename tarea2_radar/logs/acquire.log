@@ -1,1 +1,3 @@
 2026-09-18 13:49:32,892 INFO OK https://contratacionesabiertas.oece.gob.pe/api/v1/file/seace_v3/csv/2026/08/ -> 2026-08_seace_v3_csv.zip bytes=8700567 elapsed=13.5s status=200
+2026-09-18 14:59:27,370 INFO OK https://contratacionesabiertas.oece.gob.pe/api/v1/file/seace_v3/csv/2026/06/ -> 2026-06_seace_v3_csv.zip bytes=12400576 elapsed=15.0s status=200
+2026-09-18 14:59:39,561 INFO OK https://contratacionesabiertas.oece.gob.pe/api/v1/file/seace_v3/csv/2026/07/ -> 2026-07_seace_v3_csv.zip bytes=10753684 elapsed=12.2s status=200

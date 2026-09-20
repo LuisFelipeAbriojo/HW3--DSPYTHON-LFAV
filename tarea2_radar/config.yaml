@@ -12,8 +12,50 @@ acquisition:
   source: "seace_v3"
   bulk_base_url: "https://contratacionesabiertas.oece.gob.pe/api/v1"
   year: 2026
-  months: ["06", "07", "08"]   # se completa en el Día 5 (mínimo 3 meses)
+  months: ["06", "07", "08"]
   format: "csv"
 
-# Umbral de similitud, filtros y modelo de embeddings se agregan en la
-# Fase 3 (RAG híbrido), reusando/recalibrando lo definido en la Tarea 1.
+embeddings:
+  local_model: "intfloat/multilingual-e5-base"  # misma familia que la Tarea 1
+
+retrieval:
+  top_k: 8
+  similarity_threshold: 0.84
+  # Evidencia (Fase 3): el umbral 0.78 de la Tarea 1 NO transfiere a este
+  # corpus -- preguntas fuera de dominio como "¿cómo cocino un ceviche?"
+  # (0.807) o "quiero comprar zapatillas" (0.856) lo superan. Con 5
+  # preguntas fuera de dominio (0.766-0.856) y las 9 preguntas in-domain
+  # del eval set (0.842-0.894), 0.84 filtra 4/5 fuera de dominio sin
+  # sacrificar ninguna in-domain (el mínimo in-domain observado es 0.842).
+  # Igual que en la Tarea 1, esto no es perfecto (una pregunta fuera de
+  # dominio con vocabulario "administrativo" puede colar) -- se cubre con
+  # la misma segunda capa: el prompt exige NO_RESPONDE si el contexto no
+  # responde realmente la pregunta.
+
+llm:
+  provider: "anthropic"
+  model: "claude-sonnet-5"
+  pricing_verified_date: "2026-09-18"
+
+messages:
+  abstention: >-
+    No encontré procesos de contratación que respondan esta pregunta con
+    confianza dentro de los meses indexados (junio, julio y agosto de
+    2026). Prueba con otros términos o amplía el rango de fechas/monto.
+  api_error: >-
+    Ocurrió un error al consultar el modelo generador. No se generó
+    ninguna respuesta.
+
+prompts:
+  system: >-
+    Eres un asistente que responde preguntas sobre procesos de
+    contratación pública del Perú, usando EXCLUSIVAMENTE los procesos que
+    se te entregan como contexto (ya filtrados por departamento/monto/fecha
+    cuando la pregunta lo pedía). No inventes procesos ni montos.
+
+    Reglas obligatorias:
+    1. Cita cada proceso mencionado por su ocid, entre paréntesis.
+    2. Si el contexto no contiene procesos relevantes para la pregunta,
+       responde ÚNICAMENTE con el texto "NO_RESPONDE" seguido de una razón
+       breve.
+    3. Sé conciso: responde en 2 a 5 oraciones, en español.

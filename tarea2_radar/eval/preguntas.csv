@@ -1,0 +1,11 @@
+id,pregunta,ocids_relevantes,notas
+p01,"Obras de agua y saneamiento en Cusco por encima de un millón de soles",ocds-dgv273-seacev3-1226474;ocds-dgv273-seacev3-1221414;ocds-dgv273-seacev3-1233913;ocds-dgv273-seacev3-1236317,"caso del enunciado; combina filtro de departamento + monto con búsqueda semántica sobre 'agua y saneamiento'"
+p02,"Supervisión de obras de educación básica especial en Piura",ocds-dgv273-seacev3-1244698;ocds-dgv273-seacev3-1229652,""
+p03,"Alquiler de laptops y equipos de impresión en Lima",ocds-dgv273-seacev3-2026-10189-6,""
+p04,"Servicio de capacitación en escaneo láser en Arequipa por menos de 50 mil soles",ocds-dgv273-seacev3-1223253,"prueba el filtro 'menos de' (lte)"
+p05,"Adquisición de indumentaria para personal de limpieza pública en Callao",ocds-dgv273-seacev3-1225206,""
+p06,"Obras de abastecimiento de agua en comunidades nativas de Loreto",ocds-dgv273-seacev3-1223461,""
+p07,"Mejoramiento del servicio de educación primaria y secundaria en Loreto por más de diez millones de soles",ocds-dgv273-seacev3-2026-1517-6,""
+p08,"Mejoramiento de la movilidad urbana en calles de Loreto",ocds-dgv273-seacev3-1228946,""
+p09,"Procesos de contratación en Tumbes por más de cien millones de soles",,"no debería haber resultados -- prueba abstención correcta cuando el filtro no matchea nada"
+p10,"Compra de instrumentos de laboratorio para tratamiento de agua potable en Moquegua",ocds-dgv273-seacev3-1229003,""

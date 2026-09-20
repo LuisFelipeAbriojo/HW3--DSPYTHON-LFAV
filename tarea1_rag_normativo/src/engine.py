@@ -125,7 +125,10 @@ class Engine:
                     error=f"{self.api_error_msg} ({e})",
                 )
 
-        text = resp.content[0].text.strip()
+        # resp.content puede traer bloques de "thinking" antes del texto;
+        # no asumir que el primer bloque es siempre el de texto.
+        text_blocks = [b.text for b in resp.content if b.type == "text"]
+        text = text_blocks[0].strip() if text_blocks else ""
         tokens_in = resp.usage.input_tokens
         tokens_out = resp.usage.output_tokens
         cost = compute_cost(self.llm_model, tokens_in, tokens_out, when=date.today())

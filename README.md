@@ -22,7 +22,7 @@ Se trabaja siguiendo el cronograma sugerido del enunciado, día a día.
 | 2 | 2026-09-19 | Tarea 1: extracción y limpieza de texto, reporte de calidad, primer índice | ✅ hecho |
 | 3 | 2026-09-20 | Tarea 1: eval set, umbral, estrategia de versiones/alcance | ✅ hecho |
 | 4 | 2026-09-21 | Tarea 1: comparación de embeddings, app Streamlit | ✅ hecho |
-| 5 | 2026-09-22 | Tarea 2: 3 meses descargados, 1 fila por proceso, validación, RAG híbrido | pendiente |
+| 5 | 2026-09-22 | Tarea 2: 3 meses descargados, 1 fila por proceso, validación, RAG híbrido | ✅ hecho |
 | 6 | 2026-09-23 | Tarea 2: dashboard, mapa, indicador de riesgo, README, costos, video | pendiente |
 
 ## Setup (Windows)
@@ -186,7 +186,94 @@ del mes ya existe en `data/raw/`, no se vuelve a descargar.
 .venv\Scripts\python tarea2_radar\src\acquire.py --year 2026 --months 08 --fmt csv
 ```
 
-Log de descargas en `tarea2_radar/logs/acquire.log`.
+Log de descargas en `tarea2_radar/logs/acquire.log`. Se descargaron junio,
+julio y agosto de 2026 (3 meses, mínimo exigido).
+
+## Tarea 2 — Fase 1 (una fila por proceso) y Fase 2 (validación y territorio)
+
+```bash
+.venv\Scripts\python tarea2_radar\src\validate.py
+```
+
+- **Release vs. record**: cada archivo mensual publica `records.csv`, que ya
+  es la vista "record" de OCDS: una fila por `ocid`, con el
+  `compiledRelease` acumulando todas las `releases` (convocatoria, buena
+  pro, contrato...) de ese proceso hasta la fecha del corte. Una *release*
+  es un evento; un *record* es el estado consolidado — por eso `records.csv`
+  y no las releases individuales es la fuente correcta para "una fila por
+  proceso".
+- **Filas antes/después**: 7,303 (jun) + 6,567 (jul) + 6,552 (ago) =
+  **20,422 filas crudas**. Verificamos duplicados (mismo `ocid` dentro de un
+  mes o entre los 3 meses) y **no encontramos ninguno** — cada archivo
+  mensual es un corte que no se superpone con los demás (0 ocids en común
+  entre meses) y `records.csv` ya es 1 fila por ocid dentro de su mes. Filas
+  finales: **20,422** (una por proceso).
+- **Normalización territorial**: el campo `region` de OECE en realidad trae
+  la **provincia** en el 54 % de los registros (verificado), no el
+  departamento — es el problema exacto que advierte el enunciado. Usamos en
+  su lugar el campo `department`, que sí trae el departamento, y lo
+  normalizamos a los 25 departamentos (incl. Callao) con una tabla explícita
+  de las 196 provincias (`src/territory.py`, fuente: Wikipedia
+  "Anexo:Provincias del Perú", verificado 2026-09-20). Resultado: **0
+  procesos sin ubicar** (100% de match).
+- **Otras reglas de calidad**: 0 montos faltantes, **2,476 procesos con
+  monto en 0** (12.1%, mantenidos con advertencia `monto_valido=False` y
+  excluidos de KPIs monetarios, no de los conteos), 0 descripciones vacías.
+  Reporte completo:
+  [`data_quality_report.md`](tarea2_radar/data/processed/data_quality_report.md).
+
+## Tarea 2 — Fase 3: RAG híbrido
+
+```bash
+.venv\Scripts\python tarea2_radar\src\index.py
+.venv\Scripts\python tarea2_radar\eval\run_retrieval_eval.py
+```
+
+- **Filtros, no embeddings**: `src/query_parser.py` extrae departamento y
+  condición de monto (p.ej. "más de un millón", "menos de 50 mil") de la
+  pregunta y los aplica como filtro `where` de ChromaDB *antes* de la
+  búsqueda semántica. Solo la parte descriptiva ("obras de agua y
+  saneamiento") se compara por embedding. Motivo: un embedding no distingue
+  de forma confiable "más de un millón" de "menos de un millón" (vectores
+  casi idénticos), y un departamento puede aparecer mencionado en el texto
+  de un proceso ejecutado en otro — el filtro estructurado es exacto, el
+  embedding no.
+- **Umbral: NO transfirió de la Tarea 1** — probamos el 0.78 calibrado en la
+  Tarea 1 contra este corpus y preguntas claramente fuera de dominio lo
+  superan: "¿cómo cocino un ceviche?" (0.807), "quiero comprar zapatillas"
+  (0.856), "recomiéndame una película de terror" (0.826). Con 5 preguntas
+  fuera de dominio (0.766-0.856) y las 9 in-domain del eval set
+  (0.842-0.894), recalibramos a **0.84**: filtra 4/5 fuera de dominio sin
+  sacrificar ninguna in-domain. Sigue sin ser perfecto (queda una pregunta
+  fuera de dominio que lo supera) — se cubre con la misma segunda capa que
+  la Tarea 1: el prompt exige `NO_RESPONDE` si el contexto no responde
+  realmente la pregunta. Detalle en
+  [`retrieval_eval_report.md`](tarea2_radar/data/processed/retrieval_eval_report.md).
+- **Recall@k** sobre las 9 preguntas con proceso relevante conocido:
+  Recall@1=0.33, @3=0.56, @5=0.67. Al revisar los casos fallidos (p.ej.
+  "alquiler de laptops... en Lima") confirmamos que no es un bug: el filtro
+  de departamento sí aplica correctamente, pero Lima tiene 5,624 procesos y
+  varios de "alquiler de equipos/servicios" son semánticamente parecidos al
+  esperado — límite real de recall en departamentos grandes con preguntas
+  genéricas, no un error del pipeline.
+- **Motor** (`src/engine.py`): misma forma que la Tarea 1 (`answer()` ->
+  resultado estructurado), reutiliza directamente `costs.py` de la Tarea 1
+  para el logging. Cada respuesta cita los procesos por `ocid`. Ejemplo real
+  (la pregunta del enunciado): "obras de agua y saneamiento en Cusco por
+  encima de un millón de soles" → filtra `departamento=CUSCO,
+  monto_pen>=1000000`, recupera 6 procesos y cada uno se cita por su ocid y
+  monto exacto. "Procesos en Tumbes por más de cien millones" → el filtro no
+  devuelve nada → abstención a costo $0. "¿Cómo cocino un ceviche?" →
+  abstención a costo $0 gracias al umbral recalibrado.
+- **Bug real encontrado y corregido**: `resp.content[0]` a veces es un
+  bloque de "thinking" del modelo, no el de texto — el código asumía que el
+  primer bloque siempre era texto y fallaba. Se corrigió en ambos motores
+  (Tarea 1 y 2) filtrando por `b.type == "text"`.
+- **Log de costos compartido**: como la Tarea 2 reutiliza literalmente
+  `tarea1_rag_normativo/src/costs.py` (no una copia), las llamadas de ambas
+  tareas quedan en el mismo `tarea1_rag_normativo/logs/costs.log` — es
+  intencional (una sola fuente de verdad para el costo real), no un
+  archivo perdido.
 
 ## Estructura del repositorio
 
