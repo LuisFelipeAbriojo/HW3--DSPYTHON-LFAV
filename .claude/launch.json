@@ -6,6 +6,12 @@
       "runtimeExecutable": ".venv/Scripts/python.exe",
       "runtimeArgs": ["-m", "streamlit", "run", "tarea1_rag_normativo/app.py", "--server.headless", "true"],
       "port": 8501
+    },
+    {
+      "name": "tarea2-streamlit",
+      "runtimeExecutable": ".venv/Scripts/python.exe",
+      "runtimeArgs": ["-m", "streamlit", "run", "tarea2_radar/app.py", "--server.headless", "true", "--server.port", "8502"],
+      "port": 8502
     }
   ]
 }

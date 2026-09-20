@@ -9,3 +9,4 @@ chromadb
 streamlit
 anthropic
 openai
+plotly

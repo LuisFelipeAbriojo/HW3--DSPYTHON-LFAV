@@ -23,7 +23,7 @@ Se trabaja siguiendo el cronograma sugerido del enunciado, día a día.
 | 3 | 2026-09-20 | Tarea 1: eval set, umbral, estrategia de versiones/alcance | ✅ hecho |
 | 4 | 2026-09-21 | Tarea 1: comparación de embeddings, app Streamlit | ✅ hecho |
 | 5 | 2026-09-22 | Tarea 2: 3 meses descargados, 1 fila por proceso, validación, RAG híbrido | ✅ hecho |
-| 6 | 2026-09-23 | Tarea 2: dashboard, mapa, indicador de riesgo, README, costos, video | pendiente |
+| 6 | 2026-09-23 | Tarea 2: dashboard, mapa, indicador de riesgo, README, costos, video | ✅ hecho (dashboard, mapa, riesgo, README, costos — video pendiente de grabar) |
 
 ## Setup (Windows)
 
@@ -274,6 +274,49 @@ julio y agosto de 2026 (3 meses, mínimo exigido).
   tareas quedan en el mismo `tarea1_rag_normativo/logs/costs.log` — es
   intencional (una sola fuente de verdad para el costo real), no un
   archivo perdido.
+
+## Tarea 2 — Fase 4 (dashboard) y Fase 5 (indicador de riesgo)
+
+```bash
+.venv\Scripts\python tarea2_radar\src\risk.py
+.venv\Scripts\python -m streamlit run tarea2_radar\app.py
+```
+
+- **Dashboard** (`app.py`, único archivo que importa Streamlit en la
+  Tarea 2): 5 pestañas — Mapa (choropleth por departamento, procesos o
+  monto, con [GeoJSON de 25 departamentos](tarea2_radar/data/processed/geo/peru_departamentos.geojson)),
+  Preguntar (RAG híbrido de la Fase 3), Tabla (ordenable + descarga CSV),
+  Distribución (monto por categoría, procesos por mes) y Calidad de datos
+  (reportes de las Fases 2, 3 y 5). Filtros de sidebar: departamento,
+  categoría, rango de monto, rango de fecha, umbral de similitud. Solo lee
+  `data/processed/` — nunca descarga ni reconstruye el índice al cargar.
+  Probado en vivo: filtrar por Cusco da 1,681 procesos y 2.3% de postor
+  único, exactamente lo que reporta `risk_report.md` de forma
+  independiente — confirma que el filtrado interactivo y el reporte
+  precalculado son consistentes.
+- **Indicador de riesgo** (`src/risk.py`): "adjudicado" = el `ocid` tiene al
+  menos una buena pro en `com_awards.csv` de algún mes (el campo
+  `compiledRelease/tag` de `records.csv` no sirve para esto — siempre vale
+  `"compiled"`, es la etiqueta genérica del record, no la etapa del
+  proceso). Sobre 13,742 procesos adjudicados con postores registrados, el
+  **13.1% tuvo un solo postor**. Top comprador con actividad significativa:
+  *Organismo de Evaluación y Fiscalización Ambiental*, 174 procesos
+  adjudicados, **95.4% con un solo postor**. Umbral mínimo de 5 procesos
+  adjudicados por comprador en el ranking (justificación: con menos, un
+  comprador con 1 solo proceso ya marca 100% — ruido, no señal). **Esto es
+  una señal para mirar más de cerca, no evidencia de irregularidad** — no
+  se publican nombres de personas, solo de entidades públicas. Reporte
+  completo: [`risk_report.md`](tarea2_radar/data/processed/risk_report.md).
+
+## Costo real acumulado (ambas tareas)
+
+El log de costos es compartido (`tarea1_rag_normativo/logs/costs.log`) —
+ver nota más arriba. Total gastado en llamadas reales al LLM generador
+durante el desarrollo (pruebas en vivo del motor, ambas tareas): **$0.0415
+USD** (5 llamadas). Precios verificados el 2026-09-18 en claude.com/pricing (Sonnet 5:
+$2/$10 por millón de tokens input/output) y el 2026-09-18 en
+developers.openai.com (text-embedding-3-small: $0.02 por millón de
+tokens, derivado de su guía de embeddings).
 
 ## Estructura del repositorio
 
