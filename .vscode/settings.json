@@ -1,0 +1,7 @@
+{
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/Scripts/python.exe",
+  "python.analysis.extraPaths": [
+    "${workspaceFolder}/tarea1_rag_normativo/src",
+    "${workspaceFolder}/tarea2_radar/src"
+  ]
+}
