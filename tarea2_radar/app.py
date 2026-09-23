@@ -201,7 +201,9 @@ else:
                     with st.spinner(f"Preguntando al motor de la Tarea 1 sobre «{procedimiento}»..."):
                         r1 = engine_tarea1.answer(pregunta_t1)
                     st.info(f"**Procedimiento del proceso {ocid_elegido}:** {procedimiento}")
-                    if r1.abstained:
+                    if r1.error:
+                        st.error(r1.error)
+                    elif r1.abstained:
                         st.warning(r1.answer)
                     else:
                         st.success(r1.answer)
